@@ -64,7 +64,8 @@ impl BlockMgmt {
     }
 
     /// generate a new block and persist it
-    pub fn produce_block(&self, mut txs: Vec<SignedTransaction>) -> Result<Header> {
+    pub fn produce_block(&self, txs: Vec<SignedTransaction>) -> Result<Header> {
+        let mut txs = txs;
         for it in txs.iter_mut() {
             if let UnsignedTransaction::Deposit(ref mut tx) = it.transaction.unsigned {
                 let account =

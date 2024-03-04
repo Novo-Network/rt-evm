@@ -505,6 +505,23 @@ impl TryFrom<UnverifiedTransaction> for SignedTransaction {
 }
 
 impl SignedTransaction {
+    pub fn from_deposit_tx(deposit_tx: DepositTransaction, chain_id: u64) -> Self {
+        let sender = deposit_tx.from;
+        let mut transaction = UnverifiedTransaction {
+            unsigned: UnsignedTransaction::Deposit(deposit_tx),
+            signature: None,
+            chain_id,
+            hash: H256::default(),
+        };
+        transaction.hash = transaction.get_hash();
+
+        SignedTransaction {
+            transaction,
+            sender,
+            public: None,
+        }
+    }
+
     pub fn type_(&self) -> u64 {
         self.transaction.unsigned.type_()
     }
