@@ -40,7 +40,7 @@ static META_PATH: Lazy<MetaPath> = Lazy::new(|| {
 });
 
 pub struct EvmRuntime {
-    chain_id: u64,
+    pub chain_id: u64,
 
     // create a new instance every time
     mempool: Arc<Mempool>,
