@@ -216,13 +216,12 @@ impl DepositTransaction {
             .append(&self.is_system_tx)
             .append(&self.data);
     }
-
-    pub fn rlp_decode(r: &Rlp) -> Result<UnverifiedTransaction, DecoderError> {
+    pub fn decode(r: &Rlp) -> Result<Self, DecoderError> {
         if r.item_count()? != 8 {
             return Err(DecoderError::RlpIncorrectListLen);
         }
 
-        let tx = UnsignedTransaction::Deposit(DepositTransaction {
+        let tx = DepositTransaction {
             nonce: Default::default(),
             source_hash: r.val_at(0)?,
             from: r.val_at(1)?,
@@ -243,7 +242,12 @@ impl DepositTransaction {
             gas_limit: r.val_at(5)?,
             is_system_tx: r.val_at(6)?,
             data: r.val_at(7)?,
-        });
+        };
+
+        Ok(tx)
+    }
+    pub fn rlp_decode(r: &Rlp) -> Result<UnverifiedTransaction, DecoderError> {
+        let tx = UnsignedTransaction::Deposit(Self::decode(r)?);
 
         Ok(UnverifiedTransaction {
             hash: Hasher::digest([&[tx.as_u8()], r.as_raw()].concat()),
