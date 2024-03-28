@@ -49,7 +49,7 @@ impl Executor for RTEvmExecutor {
         value: U256,
         data: Vec<u8>,
     ) -> TxResp {
-        let config = Config::london();
+        let config = Config::shanghai();
         let gas_price = backend.gas_price();
         let metadata = StackSubstateMetadata::new(gas_limit, &config);
         let state = MemoryStackState::new(metadata, &mut backend);
@@ -115,7 +115,7 @@ impl Executor for RTEvmExecutor {
 
         let (mut gas, mut fee) = (0u64, U256::zero());
         let precompiles = build_precompile_set();
-        let config = Config::london();
+        let config = Config::shanghai();
 
         for tx in txs.iter() {
             backend.set_gas_price(tx.transaction.unsigned.gas_price());
