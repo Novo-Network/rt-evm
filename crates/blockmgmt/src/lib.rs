@@ -10,8 +10,8 @@ use rt_evm_mempool::Mempool;
 use rt_evm_model::{
     traits::{BlockStorage as _, Executor as _, TxStorage as _},
     types::{
-        Block, ExecResp, ExecutorContext, FatBlock, FatBlockRef, Hash, Header, MerkleRoot,
-        Proposal, Receipt, SignedTransaction, UnsignedTransaction, BASE_FEE_PER_GAS, H160,
+        Block, BlockNumber, ExecResp, ExecutorContext, FatBlock, FatBlockRef, Hash, Header,
+        MerkleRoot, Proposal, Receipt, SignedTransaction, BASE_FEE_PER_GAS, H160,
         MAX_BLOCK_GAS_LIMIT, U256,
     },
 };
@@ -62,17 +62,13 @@ impl BlockMgmt {
             storage,
         })
     }
+    pub fn get_nonce(&self, address: H160, number: Option<BlockNumber>) -> Result<U256> {
+        let account = get_account_by_backend(&self.trie, &self.storage, address, number).c(d!())?;
+        Ok(account.nonce)
+    }
 
     /// generate a new block and persist it
     pub fn produce_block(&self, txs: Vec<SignedTransaction>) -> Result<Header> {
-        let mut txs = txs;
-        for it in txs.iter_mut() {
-            if let UnsignedTransaction::Deposit(ref mut tx) = it.transaction.unsigned {
-                let account =
-                    get_account_by_backend(&self.trie, &self.storage, tx.from, None).c(d!())?;
-                tx.nonce = account.nonce;
-            }
-        }
         let (block, receipts) = self.generate_block(&txs).c(d!())?;
         let header = block.header.clone();
 
