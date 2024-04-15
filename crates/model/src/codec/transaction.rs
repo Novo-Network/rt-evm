@@ -209,9 +209,13 @@ impl DepositTransaction {
         rlp.begin_list(8)
             .append(&self.source_hash)
             .append(&self.from)
-            .append(&self.action)
-            .append(&self.mint)
-            .append(&self.value)
+            .append(&self.action);
+        if let Some(inner) = self.mint {
+            rlp.append(&inner);
+        } else {
+            rlp.append(&"");
+        }
+        rlp.append(&self.value)
             .append(&self.gas_limit)
             .append(&self.is_system_tx)
             .append(&self.data);
