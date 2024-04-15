@@ -119,10 +119,10 @@ impl UnsignedTransaction {
 
     pub fn as_u8(&self) -> u8 {
         match self {
-            UnsignedTransaction::Legacy(_) => unreachable!(),
-            UnsignedTransaction::Eip2930(_) => 1u8,
-            UnsignedTransaction::Eip1559(_) => 2u8,
-            UnsignedTransaction::Deposit(_) => 3u8,
+            UnsignedTransaction::Legacy(_) => 0x00,
+            UnsignedTransaction::Eip2930(_) => 0x01,
+            UnsignedTransaction::Eip1559(_) => 0x02,
+            UnsignedTransaction::Deposit(_) => 0x7e,
         }
     }
 
